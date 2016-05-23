@@ -11,6 +11,7 @@ class ProgressBar
   def initialize(*args)
 
     @count      = 0
+    @last_chunk_count = 0
     @max        = 100
     @meters     = [:bar, :counter, :percentage, :elapsed, :eta, :rate]
 
@@ -27,10 +28,12 @@ class ProgressBar
 
   def increment!(count = 1)
     self.count += count
+    @last_chunk_count += count
     now = ::Time.now
-    if (now - @last_write) > 0.2 || self.count >= max
+    if (now - @last_write) > 1 || self.count >= max
       write
       @last_write = now
+      @last_chunk_count = 0
     end
   end
 
@@ -56,10 +59,11 @@ class ProgressBar
   end
 
   def rate
-    if count > 0
-      count / elapsed
+    if @last_chunk_count > 0
+      @last_chunk_count / (Time.now - @last_write)
+      #@last_chunk_count = 0
     else
-      0
+      1
     end
   end
 
