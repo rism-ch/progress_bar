@@ -60,7 +60,7 @@ class ProgressBar
 
   def rate
     if @last_chunk_count > 0
-      @last_chunk_count / (Time.now - @last_write)
+      @last_chunk_count / (::Time.now - @last_write)
       #@last_chunk_count = 0
     else
       1
